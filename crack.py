@@ -1,32 +1,18 @@
-# Import Required Module
 import pikepdf
+# optional, just display a progress bar
 from tqdm import tqdm
-  
-# Empty password list
-passwords = []
-  
-# Contain passwords in text file
-password_text_file = "Password Text File"
-  
-# Iterate through each line
-# and store in passwords list
-for line in open(password_text_file):
-    passwords.append(line.strip())
-      
-# iterate over passwords
-for password in tqdm(passwords, "Cracking PDF File"):
+
+# load password from a pre defined file
+passwords = [ line.strip() for line in open("passwd.txt") ]
+
+# here we iterate trogh file
+for password in tqdm(passwords, "processing"):
     try:
-        
-        # open PDF file and check each password
-        with pikepdf.open("Protected PDF File",
-                          password = password) as p:
-            
-            # If password is correct, break the loop
-            print("[+] Password found:", password)
+        # open PDF file
+        with pikepdf.open("file.pdf", password=password) as pdf:
+            # Password decrypted successfully, break out 
+            print("Password found:", password)
             break
-              
-    # If password will not match, it will raise PasswordError
     except pikepdf._qpdf.PasswordError as e:
-        
-        # if password is wrong, continue the loop
+        # wrong password, go on
         continue
